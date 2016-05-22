@@ -1,8 +1,21 @@
 import random
 import copy
-winrate=[]
 
-iterations=int(input("Number of iterations:"))
+classTable={1:'WARRIOR',
+            2:'SHAMAN',
+            3:'DRUID',
+            4:'HUNTER',
+            5:'WARLOCK',
+            6:'ROGUE',
+            7:'MAGE',
+            8:'PALADIN',
+            9:'PRIEST'}
+
+ifile=open('input','r')
+
+iterations=int(ifile.readline())
+
+print('Number of iterations:%d'%iterations)
 
 def delrow( m, i):
     del m[i]
@@ -16,17 +29,54 @@ def printTable(m):
         for e in row:
             print("%.2f"%round(e,2),end=" ")
         print()
+
+def printClass(l):
+    for e in l:
+        print("%s"%classTable[e],end=" ")
+    print()
+
+def printResult(c1,c2,m):
+    print('        ',end=' ')
+    for e in c1:
+        print('%8s'%classTable[e],end=' ')
+    print()
+    tmp=0
+    for e in c2:
+        print('%8s'%classTable[e],end=' ')
+        for i in range(4):
+            print('%8.3f'%m[tmp][i],end=' ')
+        tmp+=1
+        print()
+    print()
+
+winrateData=[]
         
-ifile=open('input','r')
-
-
-for i in range(4):
+for i in range(9):
     tmplist=[float(x) for x in ifile.readline().split()]
-    winrate.append(tmplist)
+    winrateData.append(tmplist)
 
+'''
 print("Input win rate:")
-printTable(winrate)
+printTable(winrateData)
+'''
 
+yourClass=[int(x) for x in ifile.readline().split()]
+print('Your class : ',end=' ')
+printClass(yourClass)
+
+enemyClass=[int(x) for x in ifile.readline().split()]
+print('Enemy class: ',end=' ')
+printClass(enemyClass)
+
+winrate=[]
+
+for i in yourClass:
+    tmplist=[winrateData[i-1][j-1] for j in enemyClass]
+    winrate.append(tmplist)
+'''
+print()
+printTable(winrate)
+'''
 table=[]
 
 for yourBan in range(4):
@@ -58,5 +108,4 @@ for yourBan in range(4):
         tmplist.append(totWin/iterations)
     table.append(tmplist)
 
-print("Win rate table(col:enemy ban, row:your ban):")
-printTable(table)
+printResult(yourClass,enemyClass,table)
